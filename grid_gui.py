@@ -1,12 +1,10 @@
 import pygame
 import sys
-import time
-from collections import deque
 
-#size
-CELL_SIZE = 50
-GRID_ROWS = 10
-GRID_COLS = 10
+from grid import CELL_SIZE, GRID_ROWS, GRID_COLS, create_grid
+from algorithms import bfs
+
+ANIMATION_SPEED = 3
 
 #colors
 WHITE = (220, 220, 220)     #free cells
@@ -17,81 +15,9 @@ GRAY = (80, 80, 80)         #grid lines
 BLUE = (0, 120, 255)        #path
 YELLOW = (255, 215, 0)      #explored path
 
-ANIMATION_SPEED = 5
-
-#the grid
-def create_grid():
-
-    grid = []
-
-    for r in range(GRID_ROWS):
-        row = []
-        for cols in range(GRID_COLS):
-            row.append(0)
-        grid.append(row)
-
-    return grid
-
-#bfs
-def bfs(grid, start, goal):
-    
-    rows = len(grid)
-    cols = len(grid[0])
-
-    queue = deque()
-    queue.append(start)
-
-    #hashmap of each cell with its parent
-    parents = {start: None}
-
-    #visited cells
-    visited_order = []
-
-    #up, down, left, right
-    directions = [(-1,0), (1,0), (0,-1), (0,1)]
-
-    #while queue is not empty
-    while queue:
-
-        current_row, current_col = queue.popleft()
-        visited_order.append((current_row, current_col))
-
-        #goal reached
-        if (current_row, current_col) == goal:
-            break
-
-        #explore neighbors, next (r, c) = direction + current (r, c)
-        for row_direction, col_direction in directions:
-            next_row = current_row + row_direction
-            next_col = current_col + col_direction
-
-            #bounds check
-            #if the next (r, c) is out of bounds, try next direction
-            if 0 <= next_row < rows and 0 <= next_col < cols:
-                #if next (r, c)not a wall
-                if grid[next_row][next_col] == 0:
-                    #if next (r, c) is not a parent
-                    if (next_row, next_col) not in parents:
-                        #add current (r, c) as parent of next (r, c)
-                        parents[(next_row, next_col)] = (current_row, current_col)
-                        queue.append((next_row, next_col))  #add next (r, c) to the queue
-    
-    #no path
-    if goal not in parents:
-        return visited_order, []
-    
-    #reconstruct path
-    path = []
-    current_cell = goal
-    while current_cell is not None:
-        path.append(current_cell)
-        current_cell = parents[current_cell]
-    path.reverse()
-
-    return visited_order, path
-
 #grid as gui
 def draw_grid(window, grid, start, goal, visited=None, path=None):
+
     if visited is None:
         visited = set()
     if path is None:
@@ -105,7 +31,7 @@ def draw_grid(window, grid, start, goal, visited=None, path=None):
             cell_value = grid[r][c]
             cell_pos = (r, c)
 
-            # PRIORITY: start/goal > path > visited > wall > empty
+            #PRIORITY: start/goal > path > visited > wall > empty
             if cell_pos == start:
                 color = GREEN
             elif cell_pos == goal:
@@ -210,7 +136,7 @@ def main():
         window.fill((30,30,30))
 
         #draw cells on the grid
-        draw_grid(window, grid, start, goal, visited_set, current_path)
+        draw_grid(window, grid, start, goal, visited_set, path_set)
         
         #display the grid
         pygame.display.flip()
