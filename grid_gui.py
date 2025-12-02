@@ -132,10 +132,15 @@ def main():
                 # b (for bfs)
                 if event.key == pygame.K_b:
                     
-                    # run bfs
-                    visited_order, final_path = bfs(grid, start, goal)
+                    # run and measure speed of bfs
+                    start_time = time.perf_counter()
+                    visited_order, final_path = bfs(grid, start, goal)  # run bfs
+                    end_time = time.perf_counter()
+                    time_taken = (end_time - start_time) * 1000
+
                     print("BFS visited nodes:", len(visited_order))
                     print("BFS path length:", len(final_path))
+                    print(f"BFS time: {time_taken:.2f} ms")
                     
                     #start exploring animation
                     explore_index = 0
