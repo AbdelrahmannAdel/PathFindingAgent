@@ -1,6 +1,3 @@
-# grid.py
-
-# Size
 CELL_SIZE = 30
 GRID_ROWS = 15
 GRID_COLS = 15
