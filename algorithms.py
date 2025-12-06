@@ -1,15 +1,16 @@
 from collections import deque
 
-# bfs
+# breadth first search
 def bfs(grid, start, goal):
+    
     rows = len(grid)
     cols = len(grid[0])
 
-    # create the queue, add start cell
+    # create the queue, add start cell - FIFO
     queue = deque()
     queue.append(start)
 
-    # list of cell -> parent
+    # dictionary of cell -> parent
     parents = {start: None}
 
     # visited cells
@@ -53,6 +54,63 @@ def bfs(grid, start, goal):
         return visited_order, []
 
     # if goal reached, build the solution path
+    path = []
+    current_cell = goal
+    while current_cell is not None:
+        path.append(current_cell)
+        current_cell = parents[current_cell]
+    path.reverse()
+
+    return visited_order, path
+
+# depth first search
+def dfs(grid, start, goal):
+   
+    rows = len(grid)
+    cols = len(grid[0])
+
+    # stack for DFS (LIFO)
+    stack = [start]
+
+    # dictionary: cell -> parent
+    parents = {start: None}
+
+    # visited cells in order
+    visited_order = []
+
+    # up, down, left, right
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    # while stack is not empty
+    while stack:
+        current_row, current_col = stack.pop()
+
+        # record visit
+        visited_order.append((current_row, current_col))
+
+        # goal reached
+        if (current_row, current_col) == goal:
+            break
+
+        # explore neighbors
+        for row_direction, col_direction in directions:
+            next_row = current_row + row_direction
+            next_col = current_col + col_direction
+
+            # bounds check
+            if 0 <= next_row < rows and 0 <= next_col < cols:
+                # not a wall
+                if grid[next_row][next_col] == 0:
+                    # not visited yet (not in parents)
+                    if (next_row, next_col) not in parents:
+                        parents[(next_row, next_col)] = (current_row, current_col)
+                        stack.append((next_row, next_col))
+
+    # no solution: goal never reached
+    if goal not in parents:
+        return visited_order, []
+
+    # build path from goal back to start
     path = []
     current_cell = goal
     while current_cell is not None:
