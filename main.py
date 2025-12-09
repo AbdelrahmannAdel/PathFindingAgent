@@ -48,12 +48,14 @@ def main():
                     
                     # clicked pixel coordinates
                     mouse_x, mouse_y = event.pos
-                    #convert pixel coordinates to cell coordinates
+                    
+                    # convert pixel coordinates to cell coordinates
                     col = mouse_x // CELL_SIZE  
                     row = mouse_y // CELL_SIZE
                 
-                    # if cell out of bounds
+                    # if cell not out of bounds
                     if 0 <= row < GRID_ROWS and 0 <= col < GRID_COLS:
+                        
                         # if cell is not start and not goal
                         if (row, col) != start and (row, col) != goal:
                             
@@ -106,7 +108,7 @@ def main():
                     explore_index = 0
                     exploring = True
                     
-                    
+                # a (for A*)
                 if event.key == pygame.K_a:
                     
                     # run and measure speed of A*
