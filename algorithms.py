@@ -1,6 +1,5 @@
 from collections import deque
 import heapq
-
 # breadth first search
 def bfs(grid, start, goal):
     
@@ -23,7 +22,7 @@ def bfs(grid, start, goal):
     # while queue is not empty
     while queue:
 
-        # remove current from current from queue
+        # current coordinates = poped cell's coordinates
         current_row, current_col = queue.popleft()
 
         # add to visited
@@ -46,11 +45,10 @@ def bfs(grid, start, goal):
                     # if next (r, c) is not a parent
                     if (next_row, next_col) not in parents:
                         # add current (r, c) as parent of next (r, c)
-                        # noinspection PyTypeChecker
                         parents[(next_row, next_col)] = (current_row, current_col)
                         queue.append((next_row, next_col))  # add next (r, c) to the queue
 
-    # no solution (didn't reach goal), return the explored cells
+    # no solution path, return explored cells
     if goal not in parents:
         return visited_order, []
 
@@ -70,7 +68,7 @@ def dfs(grid, start, goal):
     rows = len(grid)
     cols = len(grid[0])
 
-    # stack for DFS (LIFO)
+    # stack for dfs - LIFO, add start
     stack = [start]
 
     # dictionary: cell -> parent
@@ -84,6 +82,8 @@ def dfs(grid, start, goal):
 
     # while stack is not empty
     while stack:
+        
+        # current coordinates = poped cell's coordinates
         current_row, current_col = stack.pop()
 
         # record visit
@@ -107,7 +107,7 @@ def dfs(grid, start, goal):
                         parents[(next_row, next_col)] = (current_row, current_col)
                         stack.append((next_row, next_col))
 
-    # no solution: goal never reached
+    # no solution path, return explored cells
     if goal not in parents:
         return visited_order, []
 
@@ -121,80 +121,109 @@ def dfs(grid, start, goal):
 
     return visited_order, path
 
+# heuristic function for A*
 def heuristic(a, b):
     # Manhattan distance
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-def Astar(grid, start, goal):
+# A* search
+def astar(grid, start, goal):
+    
     rows = len(grid)
     cols = len(grid[0])
-
-    # priority queue: (f_score, g_score, (row, col))
-    open_heap = []
+    
+    # calculate start heuristic
     start_h = heuristic(start, goal)
-    heapq.heappush(open_heap, (start_h, 0, start))
+    
+    # open set (priority queue)
+    # takes tuples of (f, g, cell)
+    open_set = []
+    heapq.heappush(open_set, (start_h, 0, start))
+    
+    # best known g_cost from start to each cell
+    g_cost = {start: 0}
 
-    # # dictionary of cell -> parent
+    # dictionary: cell -> parent
     parents = {start: None}
 
-    # g_score: cost from start to this node
-    g_score = {start: 0}
-
-    # visited cells in order
+    # visited cells in order (also closed set)
     visited_order = []
+    
+    # closed set
+    closed_set = set()
 
-    # directions
+    # up, down, left, right
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    while open_set:
 
-    while open_heap:
-        f, g, current = heapq.heappop(open_heap)
-        current_row, current_col = current
-
-        # record expansion order
+        # get node with lowest f_score
+        current_f, current_g, current = heapq.heappop(open_set)
+        
+        # if current is in closed set, skip it
+        if current in closed_set:
+            continue
+        # if current is worse than best known g, skip it
+        if current_g > g_cost.get(current, float("inf")):
+            continue
+        
+        # add current to closed set
+        closed_set.add(current)
+        
+        # add to visited
         visited_order.append(current)
-
+        
         # goal reached
         if current == goal:
             break
-
+        
+        # get current coordinates
+        current_row, current_col = current
+        
         # explore neighbors
-        for dr, dc in directions:
-            nr = current_row + dr
-            nc = current_col + dc
-
+        for row_direction, col_direction in directions:
+            next_row = current_row + row_direction
+            next_col = current_col + col_direction
+            
             # bounds check
-            if 0 <= nr < rows and 0 <= nc < cols:
-                # skip walls
-                if grid[nr][nc] == 1:
+            if 0 <= next_row < rows and 0 <= next_col < cols:
+                # skip if a wall
+                if grid[next_row][next_col] == 1:
                     continue
+                
+                # next cell
+                neighbor = (next_row, next_col)
 
-                neighbor = (nr, nc)
-                possible_g = g + 1  # cost of one step
-
-                # if this path to neighbor is better
-                if neighbor not in g_score or possible_g < g_score[neighbor]:
+                if neighbor in closed_set:
+                    continue
                     
-                    # record it
-                    g_score[neighbor] = possible_g
+                # new g, one step
+                new_g = current_g + 1
+                
+                # if this path to neighbor is better than any other previous path                    
+                if new_g < g_cost.get(neighbor, float("inf")):
+                    
+                    # update best known cost, update parent pointer
+                    g_cost[neighbor] = new_g
                     parents[neighbor] = current
                     
-                    # recalculate heuristic and f score
+                    # calculate f score for the neighbor
                     h = heuristic(neighbor, goal)
-                    f_new = possible_g + h
+                    new_f = new_g + h
                     
-                    # add to open set
-                    heapq.heappush(open_heap, (f_new, possible_g, neighbor))
-
-    # no path found
+                    # add neighbor to open set
+                    heapq.heappush(open_set, (new_f, new_g, neighbor))
+                    
+    # no solution path, return explored cells
     if goal not in parents:
         return visited_order, []
 
-    # reconstruct path from goal back to start
+    # build path from goal back to start
     path = []
     current = goal
     while current is not None:
         path.append(current)
         current = parents[current]
     path.reverse()
-
+    
     return visited_order, path

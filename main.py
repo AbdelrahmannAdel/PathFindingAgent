@@ -113,7 +113,7 @@ def main():
                     
                     # run and measure speed of A*
                     start_time = time.perf_counter()                        # record start time
-                    visited_order, final_path = Astar(grid, start, goal)    # run A*
+                    visited_order, final_path = astar(grid, start, goal)    # run A*
                     end_time = time.perf_counter()                          # record end time
                     time_taken = (end_time - start_time) * 1000             # calculate time taken
                     
