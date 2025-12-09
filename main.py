@@ -1,8 +1,8 @@
 import sys
 import time
-
-from algorithms import *
+from grid import *
 from grid_gui import *
+from algorithms import *
 
 ANIMATION_SPEED = 3
 
@@ -33,7 +33,8 @@ def main():
     running = True
     while running:
 
-        #evet handling
+        # -- for evet handling --
+        
         for event in pygame.event.get():
             
             # exit
@@ -104,12 +105,31 @@ def main():
                     #start exploring animation
                     explore_index = 0
                     exploring = True
+                    
+                    
+                if event.key == pygame.K_a:
+                    
+                    # run and measure speed of A*
+                    start_time = time.perf_counter()                        # record start time
+                    visited_order, final_path = Astar(grid, start, goal)    # run A*
+                    end_time = time.perf_counter()                          # record end time
+                    time_taken = (end_time - start_time) * 1000             # calculate time taken
+                    
+                    print("A* visited nodes:", len(visited_order))
+                    print("A* path length:", len(final_path))
+                    print(f"A* time: {time_taken:.2f} ms")
+                    
+                    #start exploring animation
+                    explore_index = 0
+                    exploring = True
+
+        # -- for graphics --
 
         # rebuild sets for each frame
         visited_set = set()
         path_set = set()
 
-        # if bfs worked (visited not empty)
+        # if search worked (visited not empty)
         if visited_order:
             # and we're still exploring
             if exploring:                        

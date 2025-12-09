@@ -1,19 +1,19 @@
 import pygame
-from grid import CELL_SIZE, GRID_ROWS, GRID_COLS, create_grid
+from main import CELL_SIZE
 
 #colors
-WHITE    = (55, 55, 55)         # free cells (medium-dark gray)
-BLACK    = (15, 15, 15)         # walls (deep black)
-GREEN    = (0, 200, 140)        # start (neon green)
-RED      = (255, 90, 90)        # goal (neon red)
-GRAY     = (85, 85, 85)         # grid lines
-BLUE     = (40, 70, 200)        # solution path (bright neon blue)
+WHITE   = (55, 55, 55)         # free cells (medium-dark gray)
+BLACK   = (15, 15, 15)         # walls (deep black)
+GREEN   = (0, 200, 140)        # start (neon green)
+RED     = (255, 90, 90)        # goal (neon red)
+GRAY    = (85, 85, 85)         # grid lines
+BLUE    = (40, 70, 200)        # solution path (bright neon blue)
 VIOLET  = (190, 90, 255)        # exploration (neon violet)
 
 #grid as gui
 def draw_grid(window, grid, start, goal, visited=None, path=None):
 
-    # if not passsed in, default to empty set
+    # if not passed in, default to empty set
     if visited is None:
         visited = set()
     if path is None:
