@@ -1,5 +1,5 @@
 import pygame
-from main import CELL_SIZE
+from grid import CELL_SIZE
 
 #colors
 WHITE   = (55, 55, 55)         # free cells (medium-dark gray)
@@ -8,7 +8,7 @@ GREEN   = (0, 200, 140)        # start (neon green)
 RED     = (255, 90, 90)        # goal (neon red)
 GRAY    = (85, 85, 85)         # grid lines
 BLUE    = (40, 70, 200)        # solution path (bright neon blue)
-VIOLET  = (190, 90, 255)        # exploration (neon violet)
+VIOLET  = (190, 90, 255)       # exploration (neon violet)
 
 #grid as gui
 def draw_grid(window, grid, start, goal, visited=None, path=None):
@@ -29,7 +29,7 @@ def draw_grid(window, grid, start, goal, visited=None, path=None):
             # 0 or 1 (free or wall)
             cell_value = grid[r][c]
 
-            # cell coordinates
+            # get cell coordinates
             cell_pos = (r, c)
 
             # color of each type of cell, prioritized

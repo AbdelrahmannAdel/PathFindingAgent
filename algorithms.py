@@ -1,5 +1,6 @@
 from collections import deque
 import heapq
+
 # breadth first search
 def bfs(grid, start, goal):
     

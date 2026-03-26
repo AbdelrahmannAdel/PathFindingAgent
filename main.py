@@ -14,7 +14,7 @@ def main():
     goal = (GRID_ROWS -1, GRID_COLS -1)
 
     final_path = []     #final path
-    visited_order = []  #list returned by bfs
+    visited_order = []  #list returned
     explore_index = 0   #how many explored cells are displayed
     exploring = False   #are we still animating?
 
